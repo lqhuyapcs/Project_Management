@@ -47,13 +47,13 @@ func (user *User) Create() map[string]interface{} {
 
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(*user.Password), bcrypt.DefaultCost)
 	*user.Password = string(hashedPassword)
+	user.AvatarUrl = u.RandomAvatarUrl()
 
 	GetDB().Create(user)
 
 	if user.ID <= 0 {
 		return u.Message(false, "Failed to create user, connection error.")
 	}
-	user.AvatarUrl = u.RandomAvatarUrl()
 	user.Password = nil //delete password
 
 	response := u.Message(true, "User has been created")

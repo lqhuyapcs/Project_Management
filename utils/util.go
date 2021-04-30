@@ -35,6 +35,6 @@ func randomInt(min, max int) int {
 func RandomAvatarUrl() string {
 	rand.Seed(time.Now().UnixNano())
 	number := randomInt(1, 6)
-	url := os.Getenv("api") + "/uploads/icons/icon_" + strconv.Itoa(number) + ".png" 
+	url := os.Getenv("api_icon") + "/uploads/icons/icon_" + strconv.Itoa(number) + ".png" 
 	return url
 }
