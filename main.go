@@ -51,7 +51,10 @@ func handleRequests() {
 	router.HandleFunc("/api/task/update-subtask", controller.UpdateSubTask).Methods("POST")
 	router.HandleFunc("/api/task/search-user", controller.SearchUserInTask).Methods("POST")
 
+	// icons
+	http.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("/uploads/icons/"))))
 
+	
 	router.Use(app.JwtAuthentication)
 	port := os.Getenv("PORT")
 	if port == "" {
