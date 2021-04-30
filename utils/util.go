@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -33,8 +34,7 @@ func randomInt(min, max int) int {
 // Random avatar
 func RandomAvatarUrl() string {
 	rand.Seed(time.Now().UnixNano())
-	// number := randomInt(1, 7)
-	//url := os.Getenv("api_icon") + "icon_" + strconv.Itoa(number) + ".png" 
-	url := os.Getenv("api_icon")
+	number := randomInt(1, 7)
+	url := os.Getenv("api_icon") + "icon_" + strconv.Itoa(number) + ".png" 
 	return url
 }
