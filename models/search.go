@@ -290,7 +290,7 @@ func SearchTaskInProject(UserID uint, Query *string, ProjectID *uint, Status *ui
 			if PageSize != nil && PageIndex != nil {
 				pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
 				err := GetDB().Table("tasks").
-					Where("tasks.project_id = ? AND tasks.status = ?", *ProjectID).
+					Where("tasks.project_id = ? AND tasks.status = ?", *ProjectID, *Status).
 					Offset(offset).Limit(pageSize).Preload("Subtasks").Find(task).Error
 				if err != nil {
 					if err == gorm.ErrRecordNotFound {

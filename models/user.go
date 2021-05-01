@@ -124,7 +124,10 @@ func UserAuthenticate(mail string, password string) map[string]interface{} {
 
 	//Worked! Logged In
 	user.Password = nil
+	projects, _ := GetListProjectByUserID(user.ID)
+	user.Projects = *projects
 
+	
 	//Create JWT token
 	tk := &Token{UserID: user.ID}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS512"), tk)
@@ -162,6 +165,35 @@ func GetUserByMail(mail string) (*User, bool) {
 		return nil, false
 	}
 	return user, true
+}
+
+// GetListUserByTaskID - user model
+func GetListUserByTaskID(TaskID uint) (*[]User, bool) {
+	listUser := &[]User{}
+	err := GetDB().Table("users").Select("id", "mail", "full_name", "avatar_url").Joins("join user_tasks on users.id = user_tasks.user_id").
+		Where("user_tasks.task_id = ?", TaskID).Find(listUser).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, true
+		}
+		return nil, false
+	}
+	return listUser, true
+}
+
+// GetListUserByProjectID - user model
+func GetListUserByProjectID(ProjectID uint) (*[]User, bool) {
+	listUser := &[]User{}
+	err := GetDB().Table("users").Select("id", "mail", "full_name", "avatar_url").Joins("join user_projects on users.id = user_projects.user_id").
+		Where("user_projects.project_id = ?", ProjectID).Find(listUser).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, true
+		}
+		return nil, false
+	}
+
+	return listUser, true
 }
 
 // Validate - user model

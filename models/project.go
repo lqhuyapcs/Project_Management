@@ -2,6 +2,7 @@ package models
 
 import (
 	u "Projectmanagement_BE/utils"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -11,10 +12,11 @@ import (
 type Project struct {
 	gorm.Model
 	Name        *string      `json:"name"`
-	Tasks       []Task       `json:"tasks"`
 	CreatorID   uint         `json:"creator_id"`
 	Status      *uint        `json:"status"`
 	Description *string      `json:"description"`
+	Users		[]User		 `gorm:"many2many:user_projects" json:"users"`
+	Tasks       []Task       `json:"tasks"`
 }
 
 // UserProject struct - project user relation
@@ -196,7 +198,11 @@ func GetProjectByID(id uint) (*Project, bool) {
 		}
 		return nil, false
 	}
+	users, _ := GetListUserByProjectID(id)
+	project.Users = *users
 
+	tasks, _ := GetListTaskByProjectID(id)
+	project.Tasks= *tasks
 	return project, true
 }
 
@@ -300,6 +306,7 @@ func GetProjectByUserID(UserID uint, Status *uint, PageSize *uint, PageIndex *ui
 		return project, true
 	}
 	if PageSize != nil && PageIndex != nil {
+		fmt.Println("aa")
 		pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
 		err := GetDB().Table("projects").Joins("join user_projects on projects.id = user_projects.project_id").
 			Where("user_projects.user_id = ? AND projects.status = ?", UserID, Status).
@@ -311,6 +318,7 @@ func GetProjectByUserID(UserID uint, Status *uint, PageSize *uint, PageIndex *ui
 			return nil, false
 		}
 	}
+	fmt.Println("??")
 	return project, true
 }
 
@@ -325,4 +333,19 @@ func GetRoleByUserProjectID(UserID uint, ProjectID uint) (string, bool) {
 		return "", false
 	}
 	return userProject.Role, true
+}
+
+// GetListProjectByUserID - project model
+func GetListProjectByUserID(UserID uint) (*[]Project, bool) {
+	project := &[]Project{}
+
+	err := GetDB().Table("projects").Joins("join user_projects on projects.id = user_projects.project_id").
+		Where("user_projects.user_id = ?", UserID).Find(project).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, true
+		}
+		return nil, false
+	}
+	return project, true
 }

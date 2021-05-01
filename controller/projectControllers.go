@@ -95,10 +95,6 @@ var GetProjectByID = func(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if request.ProjectID == nil {
-		u.Respond(w, u.Message(false, "Invalid request"))
-		return
-	}
 	// check relation between user and project
 	userProject, ok := m.GetUserProject(UserID, *request.ProjectID)
 	if !ok {

@@ -17,6 +17,7 @@ type Task struct {
 	Description *string   `json:"description"`
 	Status      *uint     `json:"status"`
 	Subtasks    []SubTask `json:"subtasks"`
+	Users		[]User    `gorm:"many2many:user_projects" json:"users"`
 }
 
 // UserTask struct
@@ -571,7 +572,9 @@ func GetTaskByID(id uint) (*Task, bool) {
 		}
 		return nil, false
 	}
+	users, _ := GetListUserByTaskID(id)
 
+	task.Users = *users
 	return task, true
 }
 
@@ -621,4 +624,19 @@ func GetTaskByUserID(UserID uint, Status *uint, PageSize *uint, PageIndex *uint)
 		}
 	}
 	return task, true
+}
+
+
+// GetListTaskByProjectID - task model
+func GetListTaskByProjectID(ProjectID uint) (*[]Task, bool) {
+	listTask := &[]Task{}
+	err := GetDB().Table("tasks").
+	Where("tasks.project_id = ?", ProjectID).Preload("Subtasks").Find(listTask).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, true
+		}
+		return nil, false
+	}
+	return listTask, true
 }
