@@ -110,7 +110,7 @@ func SearchTask(UserID uint, Query string, Status *uint, PageSize *uint, PageInd
 	}
 	if PageSize != nil && PageIndex != nil {
 		pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
-		err := GetDB().Table("tasks.").Joins("join user_tasks. on tasks..id = user_tasks.task_id").
+		err := GetDB().Table("tasks").Joins("join user_tasks on tasks.id = user_tasks.task_id").
 			Where("user_tasks.user_id = ? AND tasks.status = ? AND to_tsvector('english', tasks.name) @@ plainto_tsquery('english', ?) and user_tasks.deleted_at IS NULL", UserID, Status, Query).
 			Offset(offset).Limit(pageSize).Preload("Subtasks").Find(task).Error
 		if err != nil {

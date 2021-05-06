@@ -77,14 +77,24 @@ func (task *Task) Create(UserID uint) map[string]interface{} {
 	}
 	
 	task.CreatorID = UserID
+
+
 	GetDB().Create(task)
 
 	if task.ID <= 0 {
 		return u.Message(false, "Failed to create task, connection error??")
 	}
 
+	// create relation for creator to project
+	usertask := &UserTask{
+		TaskID:     task.ID,
+		UserID:        UserID,
+	}
+	GetDB().Create(usertask)
+
 	resp := u.Message(true, "Task has been created")
 	resp["task"] = task
+
 	return resp
 }
 
