@@ -69,6 +69,22 @@ var AddMember2Project = func(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// SetAdmin
+var SetAdmin = func(w http.ResponseWriter, r *http.Request) {
+	request := RequestUserProject{}
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		fmt.Println(err)
+		u.Respond(w, u.Message(false, "Invalid request"))
+		return
+	}
+	UserID := r.Context().Value("user").(uint)
+
+	resp := m.SetAdmin(UserID, *request.UserID, *request.ProjectID)
+
+	u.Respond(w, resp)
+
+}
 // GetProjectByID - controller
 var GetProjectByID = func(w http.ResponseWriter, r *http.Request) {
 	request := &RequestProjectID{}

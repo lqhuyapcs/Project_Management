@@ -356,3 +356,51 @@ func GetListProjectByUserID(UserID uint) (*[]Project, bool) {
 	}
 	return project, true
 }
+
+// SetAdmin - Add member to project
+func SetAdmin(UserRequestID uint, UserID uint, ProjectID uint) map[string]interface{} {
+
+	// check role of user request and project
+	roleUserReq, ok := GetRoleByUserProjectID(UserRequestID, ProjectID)
+	if ok {
+		if roleUserReq == "" {
+			return u.Message(false, "No role between user request and project")
+		}
+	} else {
+		return u.Message(false, "Connection error when query role between user request and project")
+	}
+	// check permissions
+	if roleUserReq != "admin" {
+		return u.Message(false, "Request user doesnt have permissions to add member")
+	}
+
+	// if user add is user request 
+	// if UserRequestID == UserID {
+	// 	// check relation between user removed and project
+	// 	userProjectRemoved, ok := GetUserProject(UserID, ProjectID)
+	// 	if userProjectRemoved == nil {
+	// 		if !ok {
+	// 			return u.Message(false, "Connection error when query relation between user and project")
+	// 		}
+	// 	}
+	// 	return u.Message(true, "User is already in project")
+	// }
+
+	/*--------------- User request passed ----------------*/
+
+	// check relation of user added and project
+	userProjectAdded, ok := GetUserProject(UserID, ProjectID)
+	if userProjectAdded == nil {
+		if !ok {
+			return u.Message(false, "Connection error when query relation between user and project")
+		}
+	}
+
+	// Add user to project
+	userProjectAdded.Role = "admin"
+	GetDB().Save(userProjectAdded)
+
+
+	resp := u.Message(true, "User has been changed to admin")
+	return resp
+}
