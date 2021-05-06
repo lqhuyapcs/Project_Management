@@ -124,7 +124,7 @@ var SearchTask = func(w http.ResponseWriter, r *http.Request) {
 	}
 	UserID := r.Context().Value("user").(uint)
 
-	if request.Query != nil {
+	if request.Query == nil {
 		result, ok := m.GetTaskByUserID(UserID, request.Status, request.PageSize, request.PageIndex)
 		if ok {
 			if result != nil {
