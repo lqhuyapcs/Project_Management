@@ -141,7 +141,7 @@ func SearchUser(UserID uint, Query *string, ProjectID *uint, PageSize *uint, Pag
 		if ProjectID != nil {
 			if PageSize != nil && PageIndex != nil {
 				pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
-				err := GetDB().Table("users").Distinct("id").
+				err := GetDB().Table("users").
 					Where("users.id not in (select user_id from user_projects where user_projects.project_id = ? and user_projects.deleted_at IS NULL) AND users.mail LIKE ?", *ProjectID, "%"+*Query+"%").
 					Offset(offset).Limit(pageSize).Find(user).Error
 				if err != nil {
@@ -169,7 +169,7 @@ func SearchUser(UserID uint, Query *string, ProjectID *uint, PageSize *uint, Pag
 		if ProjectID != nil {
 			if PageSize != nil && PageIndex != nil {
 				pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
-				err := GetDB().Table("users").Distinct("id").
+				err := GetDB().Table("users").
 					Where("users.id not in (SELECT user_id from user_projects where user_projects.project_id = ? and user_projects.deleted_at IS NULL) AND users.id <> ?", *ProjectID, UserID).
 					Offset(offset).Limit(pageSize).Find(user).Error
 				if err != nil {
@@ -214,7 +214,7 @@ func SearchUserInProject(UserID uint, Query *string, ProjectID *uint, PageSize *
 	if Query != nil {
 		if PageSize != nil && PageIndex != nil {
 			pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
-			err := GetDB().Table("users").Distinct("id").
+			err := GetDB().Table("users").
 				Where("users.id in (select user_id from user_projects where user_projects.project_id = ? and user_projects.deleted_at IS NULL ) AND users.mail LIKE ? AND users.id <> ?", *ProjectID, "%"+*Query+"%", UserID).
 				Offset(offset).Limit(pageSize).Find(user).Error
 			if err != nil {
@@ -227,7 +227,7 @@ func SearchUserInProject(UserID uint, Query *string, ProjectID *uint, PageSize *
 	} else {
 		if PageSize != nil && PageIndex != nil {
 			pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
-			err := GetDB().Table("users").Distinct("id").
+			err := GetDB().Table("users").
 				Where("users.id in (select user_id from user_projects where user_projects.project_id = ? and user_projects.deleted_at IS NULL ) AND users.id <> ?", *ProjectID, UserID).
 				Offset(offset).Limit(pageSize).Find(user).Error
 			if err != nil {
@@ -434,7 +434,7 @@ func SearchUserInTask(UserID uint, Query *string, TaskID *uint, PageSize *uint, 
 
 	if Query != nil {
 		pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
-		err := GetDB().Table("users").Distinct("id").
+		err := GetDB().Table("users").
 			Where("users.id in (select user_id from user_tasks where user_tasks.task_id = ? and user_tasks.deleted_at IS NULL ) AND users.mail LIKE ? AND users.id <> ?", *TaskID, "%"+*Query+"%", UserID).
 			Offset(offset).Limit(pageSize).Find(user).Error
 		if err != nil {
