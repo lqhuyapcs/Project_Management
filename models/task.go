@@ -9,7 +9,7 @@ import (
 
 // Task struct
 type Task struct {
-	gorm.Model
+	gorm.Model		
 	Name        *string   `json:"name"`
 	CreatorID   uint      `json:"creator_id"`
 	ProjectID   *uint     `json:"project_id"`

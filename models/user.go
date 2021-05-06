@@ -23,7 +23,7 @@ type UserID struct {
 
 // User struct
 type User struct {
-	gorm.Model
+	gorm.Model	
 	FullName *string	`json:"fullname"`
 	Mail     *string 	`json:"mail"`
 	Password *string   	`json:"password"`

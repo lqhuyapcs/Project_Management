@@ -50,7 +50,7 @@ type RequestSearchUserTaskInProject struct {
 	UserID    *uint   `json:"user_id" sql:"-"`
 	ProjectID *uint   `json:"project_id" sql:"-"`
 	Query     *string `json:"query" sql:"-"`
-	Status    *uint   `json:"status_id" sql:"-"`
+	Status    *uint   `json:"status" sql:"-"`
 	PageSize  *uint   `json:"page_size" sql:"-"`
 	PageIndex *uint   `json:"page_index" sql:"-"`
 }
