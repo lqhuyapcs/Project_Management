@@ -35,7 +35,9 @@ func handleRequests() {
 	router.HandleFunc("/api/project/remove-user", controller.RemoveUserFromProject).Methods("POST") 
 	router.HandleFunc("/api/project/get-by-id", controller.GetProjectByID).Methods("POST")
 	router.HandleFunc("/api/project/search-user-task", controller.SearchUserTaskInProject).Methods("POST")
-	router.HandleFunc("/api/project/set-admin", controller.SetAdmin).Methods("POST")                
+	router.HandleFunc("/api/project/set-admin", controller.SetAdmin).Methods("POST")    
+	router.HandleFunc("/api/project/set-member", controller.SetMember).Methods("POST")                
+
 	// tasks api
 	router.HandleFunc("/api/task/create", controller.CreateTask).Methods("POST")         
 	router.HandleFunc("/api/task/assign", controller.AssignTask).Methods("POST")          
