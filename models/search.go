@@ -398,7 +398,7 @@ func SearchUserTaskInProject(RequestUserID uint, UserID *uint, ProjectID *uint, 
 	}
 	if PageSize != nil && PageIndex != nil {
 		pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
-		err := GetDB().Table("tasks.").Joins("join user_tasks. on tasks.id = user_tasks.task_id").
+		err := GetDB().Table("tasks").Joins("join user_tasks on tasks.id = user_tasks.task_id").
 			Where("user_tasks.user_id = ? AND tasks.status = ? AND tasks.project_id = ? and user_tasks.deleted_at IS NULL", *UserID, *Status, *ProjectID).
 			Offset(offset).Limit(pageSize).Preload("Subtasks").Find(task).Error
 		if err != nil {
