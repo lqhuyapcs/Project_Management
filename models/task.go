@@ -56,20 +56,26 @@ func (task *Task) Create(UserID uint) map[string]interface{} {
 	if roleUserReq != "admin" {
 		return u.Message(false, "Only admin can create task")
 	}
+	if task.Status == nil {
+		status := uint(1)
+		taskStatus := &status
+		task.Status = taskStatus
+	} else {
+		// check valid task status
+		statusType := [5]uint{1, 2, 3, 4, 5}
+		errStatus := false
+		for i := range statusType {
+			if *task.Status == statusType[i] {
+				errStatus = true
+				break
+			}
+		}
 
-	// check valid task status
-	statusType := [5]uint{1, 2, 3, 4, 5}
-	errStatus := false
-	for i := range statusType {
-		if *task.Status == statusType[i] {
-			errStatus = true
-			break
+		if !errStatus {
+			return u.Message(false, "Invalid task status")
 		}
 	}
-	if !errStatus {
-		return u.Message(false, "Invalid task status")
-	}
-
+	
 	task.CreatorID = UserID
 	GetDB().Create(task)
 
