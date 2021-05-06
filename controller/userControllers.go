@@ -4,6 +4,7 @@ import (
 	m "Projectmanagement_BE/models"
 	u "Projectmanagement_BE/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -59,15 +60,18 @@ var SearchProject = func(w http.ResponseWriter, r *http.Request) {
 	request := &m.RequestSearchUserProject{}
 	err := json.NewDecoder(r.Body).Decode(request)
 	if err != nil {
+		fmt.Println("aa")
+
 		u.Respond(w, u.Message(false, "Invalid request"))
+
 		return
 	}
 	if request.PageIndex == nil || request.PageSize == nil {
+		fmt.Println("aaa")
 		u.Respond(w, u.Message(false, "Invalid request"))
 		return
 	}
 	UserID := r.Context().Value("user").(uint)
-
 	if request.Query == nil {
 		result, ok := m.GetProjectByUserID(UserID, request.Status, request.PageSize, request.PageIndex)
 		if ok {

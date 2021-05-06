@@ -37,6 +37,9 @@ func (project *Project) Create(UserID uint) map[string]interface{} {
 		return u.Message(false, "Invalid request")
 	}
 	project.CreatorID = UserID
+	status := uint(1)
+	pointerStatus := &status
+	project.Status = pointerStatus
 	GetDB().Create(project)
 
 	if project.ID <= 0 {
@@ -66,6 +69,7 @@ func (project *Project) Update(UserID uint) map[string]interface{} {
 	if project.Name == nil && project.Description == nil {
 		return u.Message(false, "Invalid request")
 	}
+
 	// check role of user request and project
 	roleUserReq, ok := GetRoleByUserProjectID(UserID, project.ID)
 	if ok {
@@ -95,6 +99,9 @@ func (project *Project) Update(UserID uint) map[string]interface{} {
 	}
 	if project.Description != nil {
 		updatedProject.Description = project.Description
+	}
+	if project.Status != nil {
+		updatedProject.Status = project.Status
 	}
 	GetDB().Save(updatedProject)
 
