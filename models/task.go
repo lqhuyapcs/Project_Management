@@ -474,7 +474,7 @@ func SetStatusDOING(UserID uint, TaskID uint) map[string]interface{} {
 		return u.Message(false, "Error when set status")
 	}
 
-	return u.Message(true, "")
+	return u.Message(true, "Set status success")
 }
 
 // SetStatusWAITING - set status to waiting
@@ -504,7 +504,7 @@ func SetStatusWAITING(UserID uint, TaskID uint) map[string]interface{} {
 	if err != nil {
 		return u.Message(false, "Error when set status")
 	}
-	return u.Message(true, "")
+	return u.Message(true, "Set status success")
 }
 
 // SetStatusDELETE - set status to delete
