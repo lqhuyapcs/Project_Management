@@ -129,7 +129,7 @@ func (task *Task) Update(UserID uint) map[string]interface{} {
 		return u.Message(false, "Only admin can create task")
 	}
 
-	updatedTask, ok := GetTaskByID(task.ID)
+	updatedTask, ok := GetTaskByIDWithoutUsers(task.ID)
 	if ok {
 		if updatedTask == nil {
 			return u.Message(false, "Task not found")
@@ -148,10 +148,20 @@ func (task *Task) Update(UserID uint) map[string]interface{} {
 	if task.Deadline != nil {
 		updatedTask.Deadline = task.Deadline
 	}
+
+	respTask, ok := GetTaskByID(task.ID)
+	if ok {
+		if updatedTask == nil {
+			return u.Message(false, "Task not found")
+		}
+	}
+	if !ok {
+		return u.Message(false, "Error when query task")
+	} 
 	GetDB().Save(updatedTask)
 
 	response := u.Message(true, "")
-	response["task"] = updatedTask
+	response["task"] = respTask
 	return response
 }
 
@@ -591,6 +601,20 @@ func GetTaskByID(id uint) (*Task, bool) {
 	users, _ := GetListUserByTaskID(id)
 
 	task.Users = *users
+	return task, true
+}
+
+// GetTaskByID - task model
+func GetTaskByIDWithoutUsers(id uint) (*Task, bool) {
+	task := &Task{}
+	err := GetDB().Table("tasks").Where("id = ?", id).Preload("Subtasks").First(task).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, true
+		}
+		return nil, false
+	}
+
 	return task, true
 }
 
