@@ -315,7 +315,7 @@ func (subTask *SubTask) Create(UserID uint, TaskID uint) map[string]interface{} 
 		return u.Message(false, "Failed to create subtask, connection error.")
 	}
 
-	resp := u.Message(true, "Sub task has been created")
+	resp := u.Message(true, "Subtask has been created")
 	resp["subtask"] = subTask
 	return resp
 }

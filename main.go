@@ -47,7 +47,7 @@ func handleRequests() {
 	router.HandleFunc("/api/task/set-waiting", controller.SetWAITINGTask).Methods("POST") 
 	router.HandleFunc("/api/task/set-delete", controller.SetDELETETask).Methods("POST")   
 	router.HandleFunc("/api/task/update-info", controller.UpdateTask).Methods("POST")     
-	router.HandleFunc("/api/task/unassign-user", controller.UnassignTask).Methods("POST") 
+	router.HandleFunc("/api/task/unassign", controller.UnassignTask).Methods("POST") 
 	router.HandleFunc("/api/task/get-by-id", controller.GetTaskByID).Methods("POST")
 	router.HandleFunc("/api/task/create-subtask", controller.CreateSubtask).Methods("POST") 
 	router.HandleFunc("/api/task/update-subtask", controller.UpdateSubTask).Methods("POST")
