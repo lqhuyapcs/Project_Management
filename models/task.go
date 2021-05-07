@@ -242,7 +242,7 @@ func RemoveUserFromTask(UserRequestID uint, UserID uint, TaskID uint) map[string
 
 	// If user request is user removed, unassign from task
 	if UserRequestID == UserID {
-		Err := GetDB().Table("user_tasks").Where("user_id = ? AND task_id = ?", UserID, TaskID).Delete(userTaskRemoved).Error
+		Err := GetDB().Table("user_tasks").Where("user_id = ? AND task_id = ?", UserID, TaskID).Unscoped().Delete(userTaskRemoved).Error
 		if Err != nil {
 			return u.Message(false, "Error when unassign from task")
 		}
@@ -274,7 +274,7 @@ func RemoveUserFromTask(UserRequestID uint, UserID uint, TaskID uint) map[string
 	}
 
 	/*--------Remove user from task----------*/
-	Err := GetDB().Table("user_tasks").Where("user_id = ? AND task_id = ?", UserID, TaskID).Delete(userTaskRemoved).Error
+	Err := GetDB().Table("user_tasks").Where("user_id = ? AND task_id = ?", UserID, TaskID).Unscoped().Delete(userTaskRemoved).Error
 	if Err != nil {
 		return u.Message(false, "Error when unassign from task")
 	}

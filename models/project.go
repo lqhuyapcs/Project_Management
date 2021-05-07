@@ -266,7 +266,7 @@ func DeleteUserProject(UserRequestID uint, UserID uint, ProjectID uint) map[stri
 			}
 		}
 		// delete user - project relation
-		Err := GetDB().Where("user_id = ? AND project_id = ?", UserID, ProjectID).Delete(userProjectRemoved).Error
+		Err := GetDB().Where("user_id = ? AND project_id = ?", UserID, ProjectID).Unscoped().Delete(userProjectRemoved).Error
 		if Err != nil {
 			return u.Message(false, "Error when delete user from project")
 		}
@@ -311,7 +311,7 @@ func DeleteUserProject(UserRequestID uint, UserID uint, ProjectID uint) map[stri
 
 	/*--------------- User request passed ----------------*/
 	// delete user - project relation
-	Err := GetDB().Where("user_id = ? AND project_id = ?", UserID, ProjectID).Delete(userProjectRemoved).Error
+	Err := GetDB().Where("user_id = ? AND project_id = ?", UserID, ProjectID).Unscoped().Delete(userProjectRemoved).Error
 	if Err != nil {
 		return u.Message(false, "Error when delete user from project")
 	}
