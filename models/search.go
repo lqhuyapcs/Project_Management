@@ -197,8 +197,8 @@ func SearchUser(UserID uint, Query *string, ProjectID *uint, PageSize *uint, Pag
 }
 
 // SearchUserInProject - model
-func SearchUserInProject(UserID uint, Query *string, ProjectID *uint, PageSize *uint, PageIndex *uint) (*[]User, bool) {
-	user := &[]User{}
+func SearchUserInProject(UserID uint, Query *string, ProjectID *uint, PageSize *uint, PageIndex *uint) (*[]UserRole, bool) {
+	user := &[]UserRole{}
 	if ProjectID != nil {
 		// check role of user request and project
 		roleUserReq, ok := GetRoleByUserProjectID(UserID, *ProjectID)
@@ -214,8 +214,11 @@ func SearchUserInProject(UserID uint, Query *string, ProjectID *uint, PageSize *
 	if Query != nil {
 		if PageSize != nil && PageIndex != nil {
 			pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
-			err := GetDB().Table("users").
-				Where("users.id in (select user_id from user_projects where user_projects.project_id = ? and user_projects.deleted_at IS NULL ) AND users.mail LIKE ? AND users.id <> ?", *ProjectID, "%"+*Query+"%", UserID).
+			// err := GetDB().Table("users").Select("id", "mail", "full_name", "avatar_url").
+			// 	Where("users.id in (select user_id from user_projects where user_projects.project_id = ? and user_projects.deleted_at IS NULL ) AND users.mail LIKE ? AND users.id <> ?", *ProjectID, "%"+*Query+"%", UserID).
+			// 	Offset(offset).Limit(pageSize).Find(user).Error
+			err := GetDB().Table("users").Select("id", "mail", "full_name", "avatar_url", "user_projects.role").Joins("join user_projects on users.id = user_projects.user_id").
+				Where("user_projects.project_id = ? AND users.mail LIKE ? AND users.id <> ?", *ProjectID, "%"+*Query+"%", UserID).
 				Offset(offset).Limit(pageSize).Find(user).Error
 			if err != nil {
 				if err == gorm.ErrRecordNotFound {
@@ -227,8 +230,11 @@ func SearchUserInProject(UserID uint, Query *string, ProjectID *uint, PageSize *
 	} else {
 		if PageSize != nil && PageIndex != nil {
 			pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
-			err := GetDB().Table("users").
-				Where("users.id in (select user_id from user_projects where user_projects.project_id = ? and user_projects.deleted_at IS NULL ) AND users.id <> ?", *ProjectID, UserID).
+			// err := GetDB().Table("users").Select("id", "mail", "full_name", "avatar_url").Joins("join user_projects on users.id = user_projects.user_id").
+			// 	Where("users.id in (select user_id from user_projects where user_projects.project_id = ? and user_projects.deleted_at IS NULL ) AND users.id <> ?", *ProjectID, UserID).
+			// 	Offset(offset).Limit(pageSize).Find(user).Error
+			err := GetDB().Table("users").Select("id", "mail", "full_name", "avatar_url", "user_projects.role").Joins("join user_projects on users.id = user_projects.user_id").
+				Where("user_projects.project_id = ? AND users.id <> ?", *ProjectID, UserID).
 				Offset(offset).Limit(pageSize).Find(user).Error
 			if err != nil {
 				if err == gorm.ErrRecordNotFound {
@@ -238,6 +244,8 @@ func SearchUserInProject(UserID uint, Query *string, ProjectID *uint, PageSize *
 			}
 		}
 	}
+
+	
 	return user, true
 }
 
