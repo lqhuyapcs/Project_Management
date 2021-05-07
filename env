@@ -1,0 +1,9 @@
+db_host=ec2-184-73-198-174.compute-1.amazonaws.com
+db_name=dagira6sgjbp1h
+db_pass=eae855f978504e97c2e3e107d1213db0f8aaec66029d4ee2a0add9001667e461
+db_port=5432
+db_type=postgres
+db_user=gdebuyropknwaz
+GOVERSION=1.14.2
+token_password=thisIsTheJwtPassword
+api_icon=https://raw.githubusercontent.com/lqhuyapcs/Project_Management/main/uploads/icons/
