@@ -326,7 +326,7 @@ func GetProjectByUserID(UserID uint, Status *uint, PageSize *uint, PageIndex *ui
 		if PageSize != nil && PageIndex != nil {
 			pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
 			err := GetDB().Table("projects").Joins("join user_projects on projects.id = user_projects.project_id").
-				Where("user_projects.user_id = ?", UserID).
+				Where("user_projects.user_id = ? AND user_projects.deleted_at is NULL", UserID).
 				Offset(offset).Limit(pageSize).Find(project).Error
 			if err != nil {
 				if err == gorm.ErrRecordNotFound {
@@ -341,7 +341,7 @@ func GetProjectByUserID(UserID uint, Status *uint, PageSize *uint, PageIndex *ui
 		fmt.Println("aa")
 		pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
 		err := GetDB().Table("projects").Joins("join user_projects on projects.id = user_projects.project_id").
-			Where("user_projects.user_id = ? AND projects.status = ?", UserID, Status).
+			Where("user_projects.user_id = ? AND projects.status = ? AND user_projects.deleted_at is NULL", UserID, Status).
 			Offset(offset).Limit(pageSize).Find(project).Error
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
@@ -372,7 +372,7 @@ func GetListProjectByUserID(UserID uint) (*[]Project, bool) {
 	project := &[]Project{}
 
 	err := GetDB().Table("projects").Joins("join user_projects on projects.id = user_projects.project_id").
-		Where("user_projects.user_id = ?", UserID).Find(project).Error
+		Where("user_projects.user_id = ? AND user_projects.deleted_at is NULL", UserID).Find(project).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, true
