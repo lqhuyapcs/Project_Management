@@ -21,6 +21,14 @@ type UserID struct {
 	UserID uint `json:"user_id" gorm:"-"`
 }
 
+type UserRole struct {
+	ID uint `json:"id"`
+	FullName string	`json:"fullname"`
+	Mail     string 	`json:"mail"`
+	Password string   	`json:"password"`
+	AvatarUrl 	 string	`json:"avatar"`
+	Role	string `json:"role"`
+}
 // User struct
 type User struct {
 	gorm.Model	
@@ -182,9 +190,9 @@ func GetListUserByTaskID(TaskID uint) (*[]User, bool) {
 }
 
 // GetListUserByProjectID - user model
-func GetListUserByProjectID(ProjectID uint) (*[]User, bool) {
-	listUser := &[]User{}
-	err := GetDB().Table("users").Select("id", "mail", "full_name", "avatar_url").Joins("join user_projects on users.id = user_projects.user_id").
+func GetListUserByProjectID(ProjectID uint) (*[]UserRole, bool) {
+	listUser := &[]UserRole{}
+	err := GetDB().Table("users").Select("id", "mail", "full_name", "avatar_url", "user_projects.role").Joins("join user_projects on users.id = user_projects.user_id").
 		Where("user_projects.project_id = ?", ProjectID).Find(listUser).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {

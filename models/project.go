@@ -17,6 +17,7 @@ type Project struct {
 	Description *string      `json:"description"`
 	Users		[]User		 `gorm:"many2many:user_projects" json:"users"`
 	Tasks       []Task       `json:"tasks"`
+	UsersRole   []UserRole 	 `json:"user_role" gorm:"-"`
 }
 
 // UserProject struct - project user relation
@@ -84,7 +85,7 @@ func (project *Project) Update(UserID uint) map[string]interface{} {
 		return u.Message(false, "Only admin can update project")
 	}	
 
-	updatedProject, ok := GetProjectByID(project.ID)
+	updatedProject, ok := GetProjectByIDWithoutUsersTasks(project.ID)
 	if ok {
 		if updatedProject == nil {
 			return u.Message(false, "Project not found")
@@ -105,8 +106,18 @@ func (project *Project) Update(UserID uint) map[string]interface{} {
 	}
 	GetDB().Save(updatedProject)
 
+	respProject, ok := GetProjectByID(project.ID)
+	if ok {
+		if updatedProject == nil {
+			return u.Message(false, "Project not found")
+		}
+	}
+	if !ok {
+		return u.Message(false, "Error when query project")
+	}
+
 	response := u.Message(true, "")
-	response["project"] = updatedProject
+	response["project"] = respProject
 	return response
 }
 
@@ -205,11 +216,25 @@ func GetProjectByID(id uint) (*Project, bool) {
 		}
 		return nil, false
 	}
-	users, _ := GetListUserByProjectID(id)
-	project.Users = *users
+	user_role, _ := GetListUserByProjectID(id)
+	project.UsersRole = *user_role
 
 	tasks, _ := GetListTaskByProjectID(id)
 	project.Tasks= *tasks
+	return project, true
+}
+
+// GetProjectByIDWithoutUsersTasks - project model
+func GetProjectByIDWithoutUsersTasks(id uint) (*Project, bool) {
+	project := &Project{}
+	err := GetDB().Table("projects").Where("id = ?", id).First(project).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, true
+		}
+		return nil, false
+	}
+
 	return project, true
 }
 

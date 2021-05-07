@@ -279,7 +279,7 @@ func RemoveUserFromTask(UserRequestID uint, UserID uint, TaskID uint) map[string
 		return u.Message(false, "Error when unassign from task")
 	}
 
-	return u.Message(true, "")
+	return u.Message(true, "User has been unassigned")
 
 }
 
