@@ -640,7 +640,7 @@ func GetTaskByUserID(UserID uint, Status *uint, PageSize *uint, PageIndex *uint)
 		if PageSize != nil && PageIndex != nil {
 			pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
 			err := GetDB().Table("tasks").Joins("join user_tasks on tasks.id = user_tasks.task_id").
-				Where("user_tasks.user_id = ?", UserID).
+				Where("user_tasks.user_id = ? AND user_tasks.deleted_at is NULL", UserID).
 				Offset(offset).Limit(pageSize).Preload("Subtasks").Find(task).Error
 			if err != nil {
 				if err == gorm.ErrRecordNotFound {
@@ -654,7 +654,7 @@ func GetTaskByUserID(UserID uint, Status *uint, PageSize *uint, PageIndex *uint)
 	if PageSize != nil && PageIndex != nil {
 		pageSize, offset := CalculatePaginate(*PageSize, *PageIndex)
 		err := GetDB().Table("tasks").Joins("join user_tasks on tasks.id = user_tasks.task_id").
-			Where("user_tasks.user_id = ? AND tasks.status = ?", UserID, Status).
+			Where("user_tasks.user_id = ? AND tasks.status = ? AND user_tasks.deleted_at is NULL", UserID, Status).
 			Offset(offset).Limit(pageSize).Preload("Subtasks").Find(task).Error
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
