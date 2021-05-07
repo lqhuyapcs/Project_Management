@@ -101,7 +101,7 @@ func (task *Task) Create(UserID uint) map[string]interface{} {
 // Update - model
 func (task *Task) Update(UserID uint) map[string]interface{} {
 
-	if task.Name == nil && task.Description == nil && task.Deadline == nil {
+	if task.Name == nil && task.Description == nil {
 		return u.Message(false, "Invalid request")
 	}
 
