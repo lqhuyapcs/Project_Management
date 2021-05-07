@@ -179,7 +179,7 @@ func GetUserByMail(mail string) (*User, bool) {
 func GetListUserByTaskID(TaskID uint) (*[]User, bool) {
 	listUser := &[]User{}
 	err := GetDB().Table("users").Select("id", "mail", "full_name", "avatar_url").Joins("join user_tasks on users.id = user_tasks.user_id").
-		Where("user_tasks.task_id = ?", TaskID).Find(listUser).Error
+		Where("user_tasks.task_id = ? and user_projects.deleted_at is NULL", TaskID).Find(listUser).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, true
@@ -193,7 +193,7 @@ func GetListUserByTaskID(TaskID uint) (*[]User, bool) {
 func GetListUserByProjectID(ProjectID uint) (*[]UserRole, bool) {
 	listUser := &[]UserRole{}
 	err := GetDB().Table("users").Select("id", "mail", "full_name", "avatar_url", "user_projects.role").Joins("join user_projects on users.id = user_projects.user_id").
-		Where("user_projects.project_id = ?", ProjectID).Find(listUser).Error
+		Where("user_projects.project_id = ? and user_projects.deleted_at is NULL", ProjectID).Find(listUser).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, true
